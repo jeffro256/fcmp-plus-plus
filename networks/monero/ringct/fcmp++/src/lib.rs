@@ -103,6 +103,8 @@ pub fn SELENE_HASH_INIT() -> <Selene as Ciphersuite>::G {
     .get_or_init(|| hash_to_point_on_curve::<Selene>(b"Monero Selene Hash Initializer"))
 }
 
+const MAX_NUM_SUPPORTED_INPUTS: usize = 16;
+
 static HELIOS_GENERATORS_CELL: OnceLock<Generators<Helios>> = OnceLock::new();
 /// The generators for Helios.
 pub fn HELIOS_GENERATORS() -> &'static Generators<Helios> {
@@ -111,7 +113,7 @@ pub fn HELIOS_GENERATORS() -> &'static Generators<Helios> {
     let h = hash_to_point_on_curve::<Helios>(b"Monero Helios H");
     let mut g_bold = Vec::with_capacity(512);
     let mut h_bold = Vec::with_capacity(512);
-    for i in 0u32 .. 512 {
+    for i in 0 .. (128 * MAX_NUM_SUPPORTED_INPUTS) {
       let mut g_buf = b"Monero Helios G ".to_vec();
       write_varint(&i, &mut g_buf).unwrap();
       g_bold.push(hash_to_point_on_curve::<Helios>(&g_buf));
@@ -132,7 +134,7 @@ pub fn SELENE_GENERATORS() -> &'static Generators<Selene> {
     let h = hash_to_point_on_curve::<Selene>(b"Monero Selene H");
     let mut g_bold = Vec::with_capacity(512);
     let mut h_bold = Vec::with_capacity(512);
-    for i in 0u32 .. 512 {
+    for i in 0 .. (256 * MAX_NUM_SUPPORTED_INPUTS) {
       let mut g_buf = b"Monero Selene G ".to_vec();
       write_varint(&i, &mut g_buf).unwrap();
       g_bold.push(hash_to_point_on_curve::<Selene>(&g_buf));
