@@ -177,14 +177,15 @@ pub struct Input {
 }
 
 impl Input {
-  // Write an Input without the pseudo-out.
-  fn write_partial(&self, writer: &mut impl io::Write) -> io::Result<()> {
+  /// Write the input, excluding the pseudo-out.
+  pub fn write_partial(&self, writer: &mut impl io::Write) -> io::Result<()> {
     writer.write_all(&self.O_tilde.to_bytes())?;
     writer.write_all(&self.I_tilde.to_bytes())?;
     writer.write_all(&self.R.to_bytes())
   }
 
-  fn read_partial(
+  /// Read the input, excluding the pseudo-out, which is passed as an argument.
+  pub fn read_partial(
     C_tilde: <Ed25519 as Ciphersuite>::G,
     reader: &mut impl io::Read,
   ) -> io::Result<Input> {
@@ -196,13 +197,14 @@ impl Input {
     })
   }
 
-  // Write the full pseudo-out.
-  fn write_full(&self, writer: &mut impl io::Write) -> io::Result<()> {
+  /// Write the full input, including pseudo-out.
+  pub fn write_full(&self, writer: &mut impl io::Write) -> io::Result<()> {
     self.write_partial(writer)?;
     writer.write_all(&self.C_tilde.to_bytes())
   }
 
-  fn read_full(reader: &mut impl io::Read) -> io::Result<Input> {
+  /// Read the full input, including pseudo-out.
+  pub fn read_full(reader: &mut impl io::Read) -> io::Result<Input> {
     let mut OIR = [0; 3 * 32];
     reader.read_exact(&mut OIR)?;
     let C_tilde = Ed25519::read_G(reader)?;
